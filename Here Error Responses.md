@@ -94,5 +94,7 @@ Authentication	|Token expired	|40102
 ## References ##
 
 [https://cloud.google.com/apis/design/errors](https://cloud.google.com/apis/design/errors)
+
 [https://github.com/grpc/grpc-go/tree/master/examples/rpc_errors](https://github.com/grpc/grpc-go/tree/master/examples/rpc_errors)
+
 [https://jbrandhorst.com/post/grpc-errors](https://jbrandhorst.com/post/grpc-errors)
