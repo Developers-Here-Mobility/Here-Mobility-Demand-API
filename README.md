@@ -33,6 +33,7 @@
     - [RideLocation](#demand.v2.common.RideLocation)
     - [RideOffer](#demand.v2.common.RideOffer)
     - [RideOffersResponse](#demand.v2.common.RideOffersResponse)
+    - [RidePreferences](#demand.v2.common.RidePreferences)
     - [RideQuery](#demand.v2.common.RideQuery)
     - [RideQueryResponse](#demand.v2.common.RideQueryResponse)
     - [RideStatusLog](#demand.v2.common.RideStatusLog)
@@ -76,6 +77,7 @@
     - [CancelTrackedRideRequest](#demand.v2.s2s.CancelTrackedRideRequest)
     - [CreatePublicTransportRideRequest](#demand.v2.s2s.CreatePublicTransportRideRequest)
     - [CreateRideRequest](#demand.v2.s2s.CreateRideRequest)
+    - [GetOfferTrackingDetailsRequest](#demand.v2.s2s.GetOfferTrackingDetailsRequest)
     - [GetRecentRidesRequest](#demand.v2.s2s.GetRecentRidesRequest)
     - [GetRideListByUserRequest](#demand.v2.s2s.GetRideListByUserRequest)
     - [GetRideListRequest](#demand.v2.s2s.GetRideListRequest)
@@ -132,6 +134,7 @@ A request to cancel a ride
 | ----- | ---- | ----- | ----------- |
 | offer_id | [string](#string) |  | Mandatory. An offer ID that was returned by GetRideOffers() |
 | passenger | [demand.v2.common.PassengerDetails](#demand.v2.common.PassengerDetails) |  | Mandatory. The passenger details at the time of booking |
+| preferences | [demand.v2.common.RidePreferences](#demand.v2.common.RidePreferences) |  | Optional. Preferences for the ride NOTE: this field is not yet supported |
 
 
 
@@ -148,7 +151,10 @@ A request to create a new ride by offer ID
 | ----- | ---- | ----- | ----------- |
 | offer_id | [string](#string) |  | Mandatory. An offer ID that was returned by GetRideOffers() |
 | passenger | [demand.v2.common.PassengerDetails](#demand.v2.common.PassengerDetails) |  | Mandatory. The passenger details at the time of booking |
-| subscribe_to_messages | [google.protobuf.BoolValue](#google.protobuf.BoolValue) |  | Optional. Specifies if messages about the ride will be sent to the passenger. Default is false. |
+| subscribe_to_messages | [google.protobuf.BoolValue](#google.protobuf.BoolValue) |  | DEPRECATED. Please use the RidePreferences object to specify messaging preferences.
+
+Note: this field is deprecated and is ignored. |
+| preferences | [demand.v2.common.RidePreferences](#demand.v2.common.RidePreferences) |  | Optional. Preferences for the ride. |
 
 
 
@@ -164,6 +170,7 @@ A request to get a ride list according to query parameters.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | query | [demand.v2.common.RideQuery](#demand.v2.common.RideQuery) |  | Optional. The query parameters with which to filter results. If no query parameters are supplied, the query uses the default values for RideQuery fields (see the RideQuery message documentation). |
+| app_id | [google.protobuf.StringValue](#google.protobuf.StringValue) |  | Optional. The ID of the app to get the rides for. |
 
 
 
@@ -275,7 +282,7 @@ History of rides
 
 Errors: NOT_FOUND: The offer ID is expired or does not exist ALREADY_EXISTS: A booking already exists for this offer ID (call GetRideOffers to receive new offer IDs). |
 | GetRide | [GetRideRequest](#demand.v2.c2s.GetRideRequest) | [.demand.v2.common.Ride](#demand.v2.c2s.GetRideRequest) | Get a ride by ID. Use this call to poll for the ride status (every 10 seconds). NOTE: The status of closed rides (COMPLETED, CANCELLED, REJECTED) never changes. Errors: NOT_FOUND: Ride does not exist |
-| GetRides | [GetRideListRequest](#demand.v2.c2s.GetRideListRequest) | [.demand.v2.common.RideQueryResponse](#demand.v2.c2s.GetRideListRequest) | Get rides for the current user. Returns rides that were updated recently (in the last 3 hours, or after the given from_update_time). |
+| GetRides | [GetRideListRequest](#demand.v2.c2s.GetRideListRequest) | [.demand.v2.common.RideQueryResponse](#demand.v2.c2s.GetRideListRequest) | Get rides for the current user. Returns rides that were updated recently (in the last 3 hours(OnGoing)/180 days(Future)/14 days(Past), or after the given from_update_time). |
 | CancelRide | [CancelRideRequest](#demand.v2.c2s.CancelRideRequest) | [.demand.v2.common.Empty](#demand.v2.c2s.CancelRideRequest) | Cancel a ride. Returns immediately without waiting for a response from the supplier. Errors: NOT_FOUND: Ride does not exist FAILED_PRECONDITION: Cancel is not allowed by policy, or because the status is REJECTED, COMPLETED, or CANCELLED. |
 | GetRideLocationAndEta | [GetRideLocationRequest](#demand.v2.c2s.GetRideLocationRequest) | [.demand.v2.common.RideLocation](#demand.v2.c2s.GetRideLocationRequest) | Returns the geo-location of the ride. Use this call to poll for the ride location (every 10 seconds) NOTES: Test the flag Ride.status_log.is_ride_location_available, to learn whether ride locations are supported. Rides which are closed (COMPLETED, CANCELLED, REJECTED) never change their location. Errors: NOT_FOUND: Ride does not exist |
 | CreatePublicTransportRide | [CreatePublicTransportRideRequest](#demand.v2.c2s.CreatePublicTransportRideRequest) | [.demand.v2.common.Empty](#demand.v2.c2s.CreatePublicTransportRideRequest) | Notify the marketplace that a public transportation offer was chosen |
@@ -422,6 +429,8 @@ NOTE: Once a ride reaches a terminal state, it cannot transition to any other st
 | cancellation_policy | [RideOffer.CancellationPolicy](#demand.v2.common.RideOffer.CancellationPolicy) |  | The cancellation policy for the ride |
 | cancellation_info | [CancellationInfo](#demand.v2.common.CancellationInfo) |  | Optional. When a cancellation occurs, this field contains information about the cancellation. |
 | cancellation_request_received_but_not_allowed | [bool](#bool) |  | When a cancellation occurs, this field value is TRUE if cancellation isn&#39;t allowed |
+| price | [Price](#demand.v2.common.Price) |  | Optional. The price of the ride updated by the supplier. |
+| app_id | [string](#string) |  | Optional. The ID of the app. |
 
 
 
@@ -438,9 +447,11 @@ Provides the real-time location and progress of the vehicle. Updated every ~10 s
 | ----- | ---- | ----- | ----------- |
 | ride_id | [string](#string) |  | The ID of the ride. |
 | vehicle_location | [Point](#demand.v2.common.Point) |  | Optional. The current location of the vehicle. |
-| estimated_pickup_time_ms | [uint64](#uint64) |  | Optional. The estimated time of pickup, constantly updated until the vehicle is at the pickup location. |
-| estimated_dropoff_time_ms | [uint64](#uint64) |  | Optional. The estimated time of drop-off, constantly updated until the vehicle is at the drop-off location. |
+| estimated_pickup_time_ms | [uint64](#uint64) |  | Optional. The estimated time of pickup, constantly updated until the vehicle is at the pickup location. This field will be deprecated soon, please use estimated_pickup_time_seconds instead. |
+| estimated_dropoff_time_ms | [uint64](#uint64) |  | Optional. The estimated time of drop-off, constantly updated until the vehicle is at the drop-off location. This field will be deprecated soon, please use estimated_dropoff_time_seconds instead. |
 | last_update_time_ms | [uint64](#uint64) |  | The last time this entity is updated. Used for tracking updates. |
+| estimated_pickup_time_seconds | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Pickup time estimate sent by the supplier. |
+| estimated_dropoff_time_seconds | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Drop-off time estimate sent by the supplier or calculated by Marketplace. |
 
 
 
@@ -458,15 +469,18 @@ An offer for a ride on the given route.
 | offer_id | [string](#string) |  | A unique offer ID. If this offer is chosen, the client sends this ID when calling CreateRide. |
 | supplier | [Supplier](#demand.v2.common.Supplier) |  | The supplier details |
 | route | [Route](#demand.v2.common.Route) |  | The ride route that the supplier suggests. |
-| estimated_pickup_time_ms | [uint64](#uint64) |  | Optional. Pickup time estimate sent by the supplier. |
-| estimated_dropoff_time_ms | [uint64](#uint64) |  | Optional. Drop-off time estimate sent by the supplier. |
+| estimated_pickup_time_ms | [uint64](#uint64) |  | Optional. Pickup time estimate sent by the supplier. NOTE: This field will be deprecated soon, please use estimated_pickup_time_seconds instead. |
+| estimated_dropoff_time_ms | [uint64](#uint64) |  | Optional. Drop-off time estimate sent by the supplier. NOTE: This field will be deprecated soon, please use estimated_ride_duration_seconds instead. |
 | price_estimation | [PriceEstimate](#demand.v2.common.PriceEstimate) |  | Optional. A price estimate for the ride |
 | offer_expiration_time_ms | [uint64](#uint64) |  | The offer expiration time (in milliseconds from the time the offer is sent) |
 | cancellation_policy | [RideOffer.CancellationPolicy](#demand.v2.common.RideOffer.CancellationPolicy) |  | The cancellation policy of the supplier (cancellation allowed or not allowed) |
-| duration_ms | [uint64](#uint64) |  | Duration of the route in milliseconds |
+| duration_ms | [uint64](#uint64) |  | Duration of the route in milliseconds. NOTE: this field will be deprecated soon. Please use duration_seconds instead. |
 | transfers | [uint32](#uint32) |  | Number of transport changes to reach the destination |
 | legs | [PublicTransportRouteLeg](#demand.v2.common.PublicTransportRouteLeg) | repeated | A list of transportation legs for the route, if this offer is a public transportation offer |
 | transit_type | [RideOffer.TransitType](#demand.v2.common.RideOffer.TransitType) |  | Specifies the transit type of this offer |
+| estimated_pickup_time_seconds | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Optional. Pickup time estimate sent by the supplier. |
+| estimated_ride_duration_seconds | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Optional. Drop-off time estimate sent by the supplier or calculated by Marketplace. This is the time between pickup to dropoff. It does not contain the time to pickup |
+| duration_seconds | [uint64](#uint64) |  | Duration of the route in seconds |
 
 
 
@@ -482,6 +496,21 @@ A list of available ride offers
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | offers | [RideOffer](#demand.v2.common.RideOffer) | repeated | A list of ride offers |
+
+
+
+
+
+
+<a name="demand.v2.common.RidePreferences"/>
+
+### RidePreferences
+Preferences of a ride
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| subscribe_to_messages | [google.protobuf.BoolValue](#google.protobuf.BoolValue) |  | Optional. Specifies if messages about the ride will be sent to the passenger. Default is false. |
 
 
 
@@ -519,7 +548,7 @@ NOTE:
 | ----- | ---- | ----- | ----------- |
 | from_time_ms | [uint64](#uint64) |  | Optional. Filters rides according to update or creation time (depending on the sort type). When the sort is UPDATE_TIME_ASC, returns rides UPDATED AFTER this time. When the sort is UPDATE_TIME_DESC, returns rides UPDATED BEFORE this time. When the sort is CREATE_TIME_ASC, returns rides CREATED AFTER this time. When the sort is CREATE_TIME_DESC, return rides CREATED BEFORE this time.
 
-Default value for ascending sort orders is NOW-3 hours. Default value for descending sort orders is NOW. This value is in UTC (milliseconds since Epoch time) |
+Default value for ascending sort orders is NOW-3 hours, expect for FUTURE or PAST rides. Default value for FUTURE rides is Now-180 days. Default value for PAST rides is NOW-14 days. Default value for descending sort orders is NOW. This value is in UTC (milliseconds since Epoch time) |
 | limit | [uint32](#uint32) |  | Optional. The maximal number of rides to return. When not set, the default is 200. |
 | status_filter | [RideQuery.RideStatusFilter](#demand.v2.common.RideQuery.RideStatusFilter) |  | Optional. Return only rides with the given status. When not set, rides with all statuses are returned. |
 | sort_by | [RideQuery.SortType](#demand.v2.common.RideQuery.SortType) |  | Optional. Default is UPDATE_TIME_ASC. |
@@ -776,9 +805,9 @@ Types of sort orders for the returned ride offers
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | UNKNOWN_RIDE_STATUS_FILTER | 0 | Unknown ride status |
-| PAST | 1 | Terminated rides (includes the statuses: COMPLETED, REJECTED or CANCELLED), for the last 72 hours. |
-| FUTURE | 2 | Pre-booked rides in status PROCESSING or ACCEPTED. |
-| ONGOING | 3 | Ongoing rides (all rides other than PAST and FUTURE) |
+| PAST | 1 | Terminated rides (includes the statuses: COMPLETED, REJECTED or CANCELLED). Default: in the past 14 days. |
+| FUTURE | 2 | Pre-booked rides in status PROCESSING or ACCEPTED. Default: in the past 180 days. |
+| ONGOING | 3 | Ongoing rides (all rides other than PAST and FUTURE). Default: in the past 3 hours. |
 | ALL | 4 | All rides |
 
 
@@ -1044,6 +1073,7 @@ A request to cancel a ride
 | user_id | [string](#string) |  | Mandatory. The user ID for which the ride is created |
 | offer_id | [string](#string) |  | Mandatory. An offer ID that was returned by GetRideOffers() |
 | passenger | [demand.v2.common.PassengerDetails](#demand.v2.common.PassengerDetails) |  | Mandatory. The passenger details at the time of booking |
+| preferences | [demand.v2.common.RidePreferences](#demand.v2.common.RidePreferences) |  | Optional. Preferences for the ride NOTE: this field is not yet supported |
 
 
 
@@ -1061,7 +1091,26 @@ A request to create a new ride by offer ID
 | user_id | [string](#string) |  | Mandatory. The user ID for which the ride is created |
 | offer_id | [string](#string) |  | Mandatory. An offer ID that was returned by GetRideOffers() |
 | passenger | [demand.v2.common.PassengerDetails](#demand.v2.common.PassengerDetails) |  | Mandatory. The passenger details at the time of booking |
-| subscribe_to_messages | [google.protobuf.BoolValue](#google.protobuf.BoolValue) |  | Optional. Specifies if messages about the ride will be sent to the passenger. Default is false. |
+| subscribe_to_messages | [google.protobuf.BoolValue](#google.protobuf.BoolValue) |  | DEPRECATED. Please use the RidePreferences object to specify messaging preferences.
+
+Note: this field is deprecated and is ignored. |
+| preferences | [demand.v2.common.RidePreferences](#demand.v2.common.RidePreferences) |  | Optional. Preferences for the ride. |
+
+
+
+
+
+
+<a name="demand.v2.s2s.GetOfferTrackingDetailsRequest"/>
+
+### GetOfferTrackingDetailsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| offer_tracking_id | [string](#string) |  | Mandatory. The ID from the public transport tracker url. |
+| transit_type | [demand.v2.common.RideOffer.TransitType](#demand.v2.common.RideOffer.TransitType) |  | Mandatory. The transit type of the offer. |
 
 
 
@@ -1093,6 +1142,7 @@ A request to get rides for a specific user
 | ----- | ---- | ----- | ----------- |
 | query | [demand.v2.common.RideQuery](#demand.v2.common.RideQuery) |  | Optional. Additional query parameters |
 | user_id | [string](#string) |  | Mandatory. The ID of the user whose rides you want to retrieve |
+| app_id | [google.protobuf.StringValue](#google.protobuf.StringValue) |  | Optional. The ID of the app to get the rides for. |
 
 
 
@@ -1108,6 +1158,7 @@ A request to get a ride list according to query parameters
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | query | [demand.v2.common.RideQuery](#demand.v2.common.RideQuery) |  | Optional. The query parameters with which to filter the rides returned. If no query parameters are supplied, the query uses the default values for RideQuery fields (see the RideQuery message documentation). |
+| app_id | [google.protobuf.StringValue](#google.protobuf.StringValue) |  | Optional. The ID of the app to get the rides for. |
 
 
 
@@ -1238,12 +1289,13 @@ History of rides
 Errors: NOT_FOUND: The offer ID is expired or does not exist ALREADY_EXISTS: A booking already exists for this offer ID (call GetRideOffers to receive new offer IDs). |
 | GetRide | [GetRideRequest](#demand.v2.s2s.GetRideRequest) | [.demand.v2.common.Ride](#demand.v2.s2s.GetRideRequest) | Get a ride by ID. Use this call to poll for the ride status (every 10 seconds). NOTE: The status of closed rides (COMPLETED, CANCELLED, REJECTED) never changes. Errors: NOT_FOUND: Ride does not exist. |
 | GetRidesByUser | [GetRideListByUserRequest](#demand.v2.s2s.GetRideListByUserRequest) | [.demand.v2.common.RideQueryResponse](#demand.v2.s2s.GetRideListByUserRequest) | Get rides for a single user. Returns rides that were updated recently (in the last 3 hours, or after the given from_update_time). |
-| GetRides | [GetRideListRequest](#demand.v2.s2s.GetRideListRequest) | [.demand.v2.common.RideQueryResponse](#demand.v2.s2s.GetRideListRequest) | Get rides for all users. Returns rides that were updated recently (in the last 3 hours, or after the given from_update_time). |
+| GetRides | [GetRideListRequest](#demand.v2.s2s.GetRideListRequest) | [.demand.v2.common.RideQueryResponse](#demand.v2.s2s.GetRideListRequest) | Get rides for all users. Returns rides that were updated recently (in the last 3 hours(OnGoing)/180 days(Future)/14 days(Past), or after the given from_update_time). |
 | CancelRide | [CancelRideRequest](#demand.v2.s2s.CancelRideRequest) | [.demand.v2.common.Empty](#demand.v2.s2s.CancelRideRequest) | Cancel a ride. Returns immediately without waiting for a response from the supplier. Errors: NOT_FOUND: Ride does not exist. FAILED_PRECONDITION: Cancel is not allowed by policy, or because the ride status is REJECTED, COMPLETED, or CANCELLED. |
 | GetRideLocationAndEta | [GetRideLocationRequest](#demand.v2.s2s.GetRideLocationRequest) | [.demand.v2.common.RideLocation](#demand.v2.s2s.GetRideLocationRequest) | Returns the geo-location of the ride. Use this call to poll for the ride location (every 10 seconds) NOTES: Test the flag Ride.status_log.is_ride_location_available, to learn whether ride locations are supported. Rides which are closed (COMPLETED, CANCELLED, REJECTED) never change their location. Errors: NOT_FOUND: Ride does not exist |
 | CreatePublicTransportRide | [CreatePublicTransportRideRequest](#demand.v2.s2s.CreatePublicTransportRideRequest) | [.demand.v2.common.Empty](#demand.v2.s2s.CreatePublicTransportRideRequest) | Notify the marketplace that a public transportation offer was chosen |
 | GetRideTrackingDetails | [GetRideTrackingDetailsRequest](#demand.v2.s2s.GetRideTrackingDetailsRequest) | [.demand.v2.common.RideTrackingDetails](#demand.v2.s2s.GetRideTrackingDetailsRequest) | Returns the ride tracking details by ride tracking ID Errors: INVALID_ARGUMENT - ride tracking id was not supplied NOT_FOUND - ride not found for the specified ride tracking ID, or ride tracking ID is invalid |
 | CancelTrackedRide | [CancelTrackedRideRequest](#demand.v2.s2s.CancelTrackedRideRequest) | [.demand.v2.common.Empty](#demand.v2.s2s.CancelTrackedRideRequest) | Cancel a tracked ride by ride tracking ID. validation is done by comparing the request passenger phone to the passenger phone number as retrieved in Create Ride Request Errors: INVALID_ARGUMENT - ride tracking id or passenger phone were not supplied NOT_FOUND - ride not found for the specified ride tracking ID, or ride tracking ID is invalid UNAUTHENTICATED: Validation failed for the given passenger phone number |
+| GetOfferTrackingDetails | [GetOfferTrackingDetailsRequest](#demand.v2.s2s.GetOfferTrackingDetailsRequest) | [.demand.v2.common.RideOffer](#demand.v2.s2s.GetOfferTrackingDetailsRequest) | Returns the offer by offer tracking ID Errors: INVALID_ARGUMENT - offer tracking id was not supplied NOT_FOUND - offer not found for the specified offer tracking ID, or offer tracking ID is invalid |
 
  
 
