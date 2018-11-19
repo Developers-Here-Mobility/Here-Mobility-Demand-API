@@ -10,24 +10,26 @@
     - [GetRideListRequest](#demand.v2.c2s.GetRideListRequest)
     - [GetRideLocationRequest](#demand.v2.c2s.GetRideLocationRequest)
     - [GetRideRequest](#demand.v2.c2s.GetRideRequest)
+    - [GetVerticalsCoverageRequest](#demand.v2.c2s.GetVerticalsCoverageRequest)
     - [RideOffersRequest](#demand.v2.c2s.RideOffersRequest)
-
-
-
-
+  
+  
+  
+  
 
 - [marketplace/public/grpc/demand_handler/v2/gen-doc/demand_c2s_service.proto](#marketplace/public/grpc/demand_handler/v2/gen-doc/demand_c2s_service.proto)
-
-
-
+  
+  
+  
     - [C2SDemandApi](#demand.v2.c2s.C2SDemandApi)
-
+  
 
 - [marketplace/public/grpc/demand_handler/v2/gen-doc/demand_common_entities.proto](#marketplace/public/grpc/demand_handler/v2/gen-doc/demand_common_entities.proto)
     - [BookingConstraints](#demand.v2.common.BookingConstraints)
     - [CancellationInfo](#demand.v2.common.CancellationInfo)
     - [DriverDetails](#demand.v2.common.DriverDetails)
     - [PassengerDetails](#demand.v2.common.PassengerDetails)
+    
     - [PublicTransportRouteLeg](#demand.v2.common.PublicTransportRouteLeg)
     - [Ride](#demand.v2.common.Ride)
     - [RideLocation](#demand.v2.common.RideLocation)
@@ -42,10 +44,13 @@
     - [Route](#demand.v2.common.Route)
     - [Supplier](#demand.v2.common.Supplier)
     - [TransitOptions](#demand.v2.common.TransitOptions)
+    - [TransportTypePreference](#demand.v2.common.TransportTypePreference)
     - [Vehicle](#demand.v2.common.Vehicle)
-
+    - [VerticalsCoverageResponse](#demand.v2.common.VerticalsCoverageResponse)
+    - [CancellationInfo.CancelReasonCategory](#demand.v2.common.CancellationInfo.CancelReasonCategory)
     - [CancellationInfo.Party](#demand.v2.common.CancellationInfo.Party)
     - [CancellationInfo.Status](#demand.v2.common.CancellationInfo.Status)
+    - [PassengerCancelReasonCategory](#demand.v2.common.PassengerCancelReasonCategory)
     - [PublicTransportRouteLeg.PublicTransportMode](#demand.v2.common.PublicTransportRouteLeg.PublicTransportMode)
     - [RideOffer.CancellationPolicy](#demand.v2.common.RideOffer.CancellationPolicy)
     - [RideOffer.SortType](#demand.v2.common.RideOffer.SortType)
@@ -54,23 +59,24 @@
     - [RideQuery.SortType](#demand.v2.common.RideQuery.SortType)
     - [RideStatusUpdate.Status](#demand.v2.common.RideStatusUpdate.Status)
     - [Vehicle.VehicleType](#demand.v2.common.Vehicle.VehicleType)
-
-
-
+  
+  
+  
 
 - [marketplace/public/grpc/demand_handler/v2/gen-doc/demand_common_types.proto](#marketplace/public/grpc/demand_handler/v2/gen-doc/demand_common_types.proto)
     - [Address](#demand.v2.common.Address)
     - [Empty](#demand.v2.common.Empty)
     - [Location](#demand.v2.common.Location)
+    - [Place](#demand.v2.common.Place)
     - [Point](#demand.v2.common.Point)
     - [Price](#demand.v2.common.Price)
     - [PriceEstimate](#demand.v2.common.PriceEstimate)
     - [PriceRange](#demand.v2.common.PriceRange)
     - [TimeRange](#demand.v2.common.TimeRange)
-
-
-
-
+  
+  
+  
+  
 
 - [marketplace/public/grpc/demand_handler/v2/gen-doc/demand_s2s_messages.proto](#marketplace/public/grpc/demand_handler/v2/gen-doc/demand_s2s_messages.proto)
     - [CancelRideRequest](#demand.v2.s2s.CancelRideRequest)
@@ -84,18 +90,19 @@
     - [GetRideLocationRequest](#demand.v2.s2s.GetRideLocationRequest)
     - [GetRideRequest](#demand.v2.s2s.GetRideRequest)
     - [GetRideTrackingDetailsRequest](#demand.v2.s2s.GetRideTrackingDetailsRequest)
+    - [GetVerticalsCoverageRequest](#demand.v2.s2s.GetVerticalsCoverageRequest)
     - [RideOffersRequest](#demand.v2.s2s.RideOffersRequest)
-
-
-
-
+  
+  
+  
+  
 
 - [marketplace/public/grpc/demand_handler/v2/gen-doc/demand_s2s_service.proto](#marketplace/public/grpc/demand_handler/v2/gen-doc/demand_s2s_service.proto)
-
-
-
+  
+  
+  
     - [S2SDemandApi](#demand.v2.s2s.S2SDemandApi)
-
+  
 
 - [Scalar Value Types](#scalar-value-types)
 
@@ -118,6 +125,7 @@ A request to cancel a ride
 | ----- | ---- | ----- | ----------- |
 | ride_id | [string](#string) |  | Mandatory. The unique ride ID. |
 | cancel_reason | [string](#string) |  | Optional. Free text. The reason for the cancellation. |
+| cancel_reason_category | [demand.v2.common.PassengerCancelReasonCategory](#demand.v2.common.PassengerCancelReasonCategory) |  | Optional. The cancellation reason category. |
 
 
 
@@ -207,6 +215,22 @@ A request to get a ride
 
 
 
+<a name="demand.v2.c2s.GetVerticalsCoverageRequest"/>
+
+### GetVerticalsCoverageRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| point | [demand.v2.common.Point](#demand.v2.common.Point) |  | Mandatory. |
+| filter_by_restrictions | [bool](#bool) |  | Optional. Required to filter blacklist/whitelist suppliers. Default - false. |
+
+
+
+
+
+
 <a name="demand.v2.c2s.RideOffersRequest"/>
 
 ### RideOffersRequest
@@ -218,23 +242,24 @@ Otherwise, this is a request for an immediate pickup (within 30 minutes).
 | ----- | ---- | ----- | ----------- |
 | route | [demand.v2.common.Route](#demand.v2.common.Route) |  | Mandatory. The requested route of the ride. |
 | constraints | [demand.v2.common.BookingConstraints](#demand.v2.common.BookingConstraints) |  | Optional. Ride constraints such as passenger count, child seats, number of suitcases, etc. |
-| prebook_pickup_time_ms | [uint64](#uint64) |  | FUTURE FEATURE, CURRENTLY UNSUPPORTED: Optional. A future pickup time, which is at least 30 minutes after the request time. An empty value indicates a request for an immediate ride. |
+| prebook_pickup_time_ms | [uint64](#uint64) |  | Optional. For taxi rides, this should be a future pickup time, which is at least 30 minutes after the request time. For public transport rides this can be any pickup time that is not in the past. In all cases, an empty value indicates a request for an immediate ride. |
 | price_range | [demand.v2.common.PriceRange](#demand.v2.common.PriceRange) |  | FUTURE FEATURE, CURRENTLY UNSUPPORTED: Optional. A requested price range. If this value is set, only offers whose price is within the range are returned. Otherwise, any price is assumed to be acceptable. |
 | sort_type | [demand.v2.common.RideOffer.SortType](#demand.v2.common.RideOffer.SortType) |  | FUTURE FEATURE, CURRENTLY UNSUPPORTED: Optional. How to sort the RideOffers, by price or by ETA. (The Marketplace default sort order is by best price, and then minimal ETA.). |
 | passenger_note | [string](#string) |  | Optional. A free text note from the passenger. |
 | transit_options | [demand.v2.common.TransitOptions](#demand.v2.common.TransitOptions) |  | Optional. Parameters for transit offers. |
+| transport_type_preference | [demand.v2.common.TransportTypePreference](#demand.v2.common.TransportTypePreference) |  | Optional. |
 
 
 
 
 
+ 
 
+ 
 
+ 
 
-
-
-
-
+ 
 
 
 
@@ -244,11 +269,11 @@ Otherwise, this is a request for an immediate pickup (within 30 minutes).
 ## marketplace/public/grpc/demand_handler/v2/gen-doc/demand_c2s_service.proto
 The client-to-service API
 
+ 
 
+ 
 
-
-
-
+ 
 
 
 <a name="demand.v2.c2s.C2SDemandApi"/>
@@ -285,8 +310,9 @@ Errors: NOT_FOUND: The offer ID is expired or does not exist ALREADY_EXISTS: A b
 | CancelRide | [CancelRideRequest](#demand.v2.c2s.CancelRideRequest) | [.demand.v2.common.Empty](#demand.v2.c2s.CancelRideRequest) | Cancel a ride. Returns immediately without waiting for a response from the supplier. Errors: NOT_FOUND: Ride does not exist FAILED_PRECONDITION: Cancel is not allowed by policy, or because the status is REJECTED, COMPLETED, or CANCELLED. |
 | GetRideLocationAndEta | [GetRideLocationRequest](#demand.v2.c2s.GetRideLocationRequest) | [.demand.v2.common.RideLocation](#demand.v2.c2s.GetRideLocationRequest) | Returns the geo-location of the ride. Use this call to poll for the ride location (every 10 seconds) NOTES: Test the flag Ride.status_log.is_ride_location_available, to learn whether ride locations are supported. Rides which are closed (COMPLETED, CANCELLED, REJECTED) never change their location. Errors: NOT_FOUND: Ride does not exist |
 | CreatePublicTransportRide | [CreatePublicTransportRideRequest](#demand.v2.c2s.CreatePublicTransportRideRequest) | [.demand.v2.common.Empty](#demand.v2.c2s.CreatePublicTransportRideRequest) | Notify the marketplace that a public transportation offer was chosen |
+| GetVerticalsCoverage | [GetVerticalsCoverageRequest](#demand.v2.c2s.GetVerticalsCoverageRequest) | [.demand.v2.common.VerticalsCoverageResponse](#demand.v2.c2s.GetVerticalsCoverageRequest) | Returns the verticals in which the point is covered |
 
-
+ 
 
 
 
@@ -325,6 +351,7 @@ Information about a ride cancellation
 | cancel_reason | [string](#string) |  | The reason the ride was canceled (a free-text string). |
 | request_time_ms | [uint64](#uint64) |  | The time the cancellation was requested. |
 | status | [CancellationInfo.Status](#demand.v2.common.CancellationInfo.Status) |  | The status of the cancellation request. |
+| cancel_reason_category | [CancellationInfo.CancelReasonCategory](#demand.v2.common.CancellationInfo.CancelReasonCategory) |  | The cancellation reason cateory. |
 
 
 
@@ -358,10 +385,9 @@ Passenger information
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  | Mandatory. The passenger’s first and last name. |
-| phone_number | [string](#string) |  | The passenger’s telephone number. |
+| phone_number | [string](#string) |  | Mandatory. The passenger’s telephone number. |
 | photo_url | [string](#string) |  | Optional. A URL pointing to the passenger’s photo. |
 | email | [string](#string) |  | Optional. The passenger&#39;s email address. |
-
 
 
 
@@ -447,11 +473,11 @@ Provides the real-time location and progress of the vehicle. Updated every ~10 s
 | ----- | ---- | ----- | ----------- |
 | ride_id | [string](#string) |  | The ID of the ride. |
 | vehicle_location | [Point](#demand.v2.common.Point) |  | Optional. The current location of the vehicle. |
-| estimated_pickup_time_ms | [uint64](#uint64) |  | Optional. The estimated time of pickup, constantly updated until the vehicle is at the pickup location. This field will be deprecated soon, please use estimated_pickup_time_seconds instead. |
-| estimated_dropoff_time_ms | [uint64](#uint64) |  | Optional. The estimated time of drop-off, constantly updated until the vehicle is at the drop-off location. This field will be deprecated soon, please use estimated_dropoff_time_seconds instead. |
+| estimated_pickup_time_ms | [uint64](#uint64) |  | Optional. The estimated time (in epoch) of pickup, constantly updated until the vehicle is at the pickup location. This field will be deprecated soon, please use estimated_pickup_time_seconds instead. |
+| estimated_dropoff_time_ms | [uint64](#uint64) |  | Optional. The estimated time (in epoch) of drop-off, constantly updated until the vehicle is at the drop-off location. This field will be deprecated soon, please use estimated_dropoff_time_seconds instead. |
 | last_update_time_ms | [uint64](#uint64) |  | The last time this entity is updated. Used for tracking updates. |
-| estimated_pickup_time_seconds | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Pickup time estimate sent by the supplier. |
-| estimated_dropoff_time_seconds | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Drop-off time estimate sent by the supplier or calculated by Marketplace. |
+| estimated_pickup_time_seconds | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Estimated number of seconds until the driver will pick the passenger up. For example: 60 seconds to pickup |
+| estimated_dropoff_time_seconds | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Estimated number of seconds until dropoff. For example: 10 minutes until dropoff (10*60 = 600 seconds) |
 
 
 
@@ -469,8 +495,8 @@ An offer for a ride on the given route.
 | offer_id | [string](#string) |  | A unique offer ID. If this offer is chosen, the client sends this ID when calling CreateRide. |
 | supplier | [Supplier](#demand.v2.common.Supplier) |  | The supplier details. |
 | route | [Route](#demand.v2.common.Route) |  | The ride route that the supplier suggests. |
-| estimated_pickup_time_ms | [uint64](#uint64) |  | Optional. Pickup time estimate sent by the supplier. NOTE: This field will be deprecated soon, please use estimated_pickup_time_seconds instead. |
-| estimated_dropoff_time_ms | [uint64](#uint64) |  | Optional. Drop-off time estimate sent by the supplier. NOTE: This field will be deprecated soon, please use estimated_ride_duration_seconds instead. |
+| estimated_pickup_time_ms | [uint64](#uint64) |  | Optional. Pickup time (in epoch) estimate sent by the supplier. NOTE: This field will be deprecated soon, please use estimated_pickup_time_seconds instead. |
+| estimated_dropoff_time_ms | [uint64](#uint64) |  | Optional. Drop-off time (in epoch) estimate sent by the supplier. NOTE: This field will be deprecated soon, please use estimated_ride_duration_seconds instead. |
 | price_estimation | [PriceEstimate](#demand.v2.common.PriceEstimate) |  | Optional. A price estimate for the ride. |
 | offer_expiration_time_ms | [uint64](#uint64) |  | The offer expiration time (in milliseconds from the time the offer is sent). |
 | cancellation_policy | [RideOffer.CancellationPolicy](#demand.v2.common.RideOffer.CancellationPolicy) |  | The cancellation policy of the supplier (cancellation allowed or not allowed). |
@@ -478,9 +504,9 @@ An offer for a ride on the given route.
 | transfers | [uint32](#uint32) |  | Number of transport changes to reach the destination. |
 | legs | [PublicTransportRouteLeg](#demand.v2.common.PublicTransportRouteLeg) | repeated | A list of transportation legs for the route, if this offer is a public transportation offer. |
 | transit_type | [RideOffer.TransitType](#demand.v2.common.RideOffer.TransitType) |  | Specifies the transit type of this offer. |
-| estimated_pickup_time_seconds | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Optional. Pickup time estimate sent by the supplier. |
-| estimated_ride_duration_seconds | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Optional. Drop-off time estimate sent by the supplier or calculated by Marketplace. This is the time between pickup to dropoff. It does not contain the time to pickup. |
-| duration_seconds | [uint64](#uint64) |  | Duration of the route in seconds. |
+| estimated_pickup_time_seconds | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Optional. Estimated number of seconds until the driver will pick the passenger up. For example: 60 seconds to pickup |
+| estimated_ride_duration_seconds | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Optional. Estimated number of seconds between pickup and dropoff. NOTE: It does not include the time until pickup. |
+| duration_seconds | [uint64](#uint64) |  | Duration of the route in seconds. NOTE: this field will be deprecated soon. Please use estimated_ride_duration_seconds instead. |
 
 
 
@@ -662,6 +688,7 @@ Ride supplier details
 | logo_url | [string](#string) |  | Optional. A URL pointing to a logo image for the supplier. |
 | phone_number | [string](#string) |  | The supplier’s telephone number. |
 | address | [string](#string) |  | The supplier’s address. |
+| supplier_notes | [string](#string) | repeated | The supplier&#39;s notes. |
 
 
 
@@ -679,6 +706,22 @@ Ride supplier details
 | max_transfers | [google.protobuf.Int32Value](#google.protobuf.Int32Value) |  | Optional. Maximum number of changes or transfers allowed in a route. Default is unlimited. Range is 0-6. |
 | max_walking_distance_meters | [google.protobuf.Int32Value](#google.protobuf.Int32Value) |  | Optional. Specifies a maximum walking distance in meters. Default is 2000. Range is 0-6000. |
 | locale | [google.protobuf.StringValue](#google.protobuf.StringValue) |  | Optional. The client&#39;s locale. Complies with the ISO 639-1 standard and defaults to en. |
+
+
+
+
+
+
+<a name="demand.v2.common.TransportTypePreference"/>
+
+### TransportTypePreference
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| use_taxi | [google.protobuf.BoolValue](#google.protobuf.BoolValue) |  |  |
+| use_public_transport | [google.protobuf.BoolValue](#google.protobuf.BoolValue) |  |  |
 
 
 
@@ -703,6 +746,44 @@ Vehicle details
 
 
 
+
+<a name="demand.v2.common.VerticalsCoverageResponse"/>
+
+### VerticalsCoverageResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| verticals | [RideOffer.TransitType](#demand.v2.common.RideOffer.TransitType) | repeated |  |
+
+
+
+
+
+ 
+
+
+<a name="demand.v2.common.CancellationInfo.CancelReasonCategory"/>
+
+### CancellationInfo.CancelReasonCategory
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| UNKNOWN_CANCEL_REASON_CATEGORY | 0 | Unknown cancellation category. |
+| DRIVER_NO_SHOW | 1 | Passenger cancellation category. |
+| PRICE_CHANGED | 2 | Passenger cancellation category. |
+| ETA_CHANGED | 3 | Passenger cancellation category. |
+| UNSUITABLE_VEHICLE | 4 | Passenger cancellation category. |
+| DRIVER_BEHAVED_INAPPROPRIATELY | 5 | Passenger cancellation category. |
+| CHANGED_MY_PLANS | 6 | Passenger cancellation category. |
+| DRIVERS_UNAVAILABLE | 7 | Supplier cancellation category. |
+| PASSENGER_NO_SHOW | 8 | Supplier cancellation category. |
+| PASSENGER_REQUESTED_TO_CANCEL | 9 | Supplier cancellation category. |
+| VEHICLE_MALFUNCTION | 10 | Supplier cancellation category. |
+| HEAVY_TRAFFIC | 11 | Supplier cancellation category. |
+| OTHER_CANCEL_REASON_CATEGORY | 100 | Supplier or passenger cancellation category. |
 
 
 
@@ -730,6 +811,25 @@ Vehicle details
 | PROCESSING | 1 | The cancellation request is being processed. |
 | ACCEPTED | 2 | The cancellation request is accepted. |
 | REJECTED | 3 | The cancellation request is rejected. |
+
+
+
+<a name="demand.v2.common.PassengerCancelReasonCategory"/>
+
+### PassengerCancelReasonCategory
+Passenger cancellation reason category
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| UNKNOWN_PASSENGER_CANCEL_REASON_CATEGORY | 0 | Unknown cancellation category. |
+| DRIVER_NO_SHOW | 1 | Driver did not show up. |
+| PRICE_CHANGED | 2 | Ride price changed. |
+| ETA_CHANGED | 3 | Ride ETA changed. |
+| UNSUITABLE_VEHICLE | 4 | Ride vehicle is not suitable. |
+| DRIVER_BEHAVED_INAPPROPRIATELY | 5 | Driver behaved inappropriately. |
+| CHANGED_MY_PLANS | 6 | Passenger changed plans. |
+| OTHER_PASSENGER_CANCEL_REASON_CATEGORY | 100 | Other. |
+
 
 
 
@@ -865,11 +965,11 @@ Ride status values
 | NOT_SUPPLIED | 5 | Vehicle type not supplied. |
 
 
+ 
 
+ 
 
-
-
-
+ 
 
 
 
@@ -926,7 +1026,24 @@ A start/end/midpoint location in a ride
 | ----- | ---- | ----- | ----------- |
 | point | [Point](#demand.v2.common.Point) |  | Geo-location (latitude and longitude). |
 | address | [Address](#demand.v2.common.Address) |  | Street address. |
-| free_text | [string](#string) |  | Place name or street address in a free text format. |
+| free_text | [string](#string) |  | Optional. Street address in a free text format. |
+| place | [Place](#demand.v2.common.Place) |  | Optional. Place information of the location. |
+
+
+
+
+
+
+<a name="demand.v2.common.Place"/>
+
+### Place
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  | The place name. |
+| category | [string](#string) |  | The place category (e.g.: Airport, Restaurant, Park, etc.). |
 
 
 
@@ -1013,13 +1130,13 @@ A time range
 
 
 
+ 
 
+ 
 
+ 
 
-
-
-
-
+ 
 
 
 
@@ -1041,6 +1158,7 @@ A request to cancel a ride
 | ride_id | [string](#string) |  | Mandatory. The unique ride ID. |
 | user_id | [google.protobuf.StringValue](#google.protobuf.StringValue) |  | Optional. The ID of the requesting user. |
 | cancel_reason | [string](#string) |  | Optional. Free text. The reason for the cancellation. |
+| cancel_reason_category | [demand.v2.common.PassengerCancelReasonCategory](#demand.v2.common.PassengerCancelReasonCategory) |  | Optional. The category of the cancellation. |
 
 
 
@@ -1058,6 +1176,7 @@ A request to cancel a ride
 | ride_tracking_id | [string](#string) |  | Mandatory. The ID from the ride tracker url. |
 | passenger_phone | [string](#string) |  | Mandatory. the passenger phone for validation purposes. |
 | cancel_reason | [string](#string) |  | Optional. Free text. The reason for the cancellation. |
+| cancel_reason_category | [demand.v2.common.PassengerCancelReasonCategory](#demand.v2.common.PassengerCancelReasonCategory) |  | Optional. The category of the cancellation. |
 
 
 
@@ -1214,6 +1333,22 @@ A request to get a ride
 
 
 
+<a name="demand.v2.s2s.GetVerticalsCoverageRequest"/>
+
+### GetVerticalsCoverageRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| point | [demand.v2.common.Point](#demand.v2.common.Point) |  | Mandatory. |
+| filter_by_restrictions | [bool](#bool) |  | Optional. Required to filter blacklist/whitelist suppliers. Default - false. |
+
+
+
+
+
+
 <a name="demand.v2.s2s.RideOffersRequest"/>
 
 ### RideOffersRequest
@@ -1226,23 +1361,24 @@ Otherwise, this is a request for an immediate pickup (within 30 minutes).
 | user_id | [string](#string) |  | Mandatory. The ID of the user requesting the ride. |
 | route | [demand.v2.common.Route](#demand.v2.common.Route) |  | Mandatory. The requested route of the ride. |
 | constraints | [demand.v2.common.BookingConstraints](#demand.v2.common.BookingConstraints) |  | Optional. Ride constraints such as passenger count, child seats, number of suitcases, etc. |
-| prebook_pickup_time_ms | [uint64](#uint64) |  | Optional. A future pickup time, which is at least 30 minutes after the request time. An empty value indicates a request for an immediate ride. |
+| prebook_pickup_time_ms | [uint64](#uint64) |  | Optional. For taxi rides, this should be a future pickup time, which is at least 30 minutes after the request time. For public transport rides this can be any pickup time that is not in the past. In all cases, an empty value indicates a request for an immediate ride. |
 | price_range | [demand.v2.common.PriceRange](#demand.v2.common.PriceRange) |  | FUTURE FEATURE, CURRENTLY UNSUPPORTED: Optional. A requested price range. If this value is set, only offers whose price is within the range are returned. Otherwise, any price is assumed to be acceptable. |
 | sort_type | [demand.v2.common.RideOffer.SortType](#demand.v2.common.RideOffer.SortType) |  | FUTURE FEATURE, CURRENTLY UNSUPPORTED: Optional. How to sort the RideOffers, by price or by ETA. (The Marketplace default sort order is by best price, and then minimal ETA.). |
 | passenger_note | [string](#string) |  | Optional. A free text note from the passenger. |
 | transit_options | [demand.v2.common.TransitOptions](#demand.v2.common.TransitOptions) |  | Optional. Parameters for transit options. |
+| transport_type_preference | [demand.v2.common.TransportTypePreference](#demand.v2.common.TransportTypePreference) |  | Optional. |
 
 
 
 
 
+ 
 
+ 
 
+ 
 
-
-
-
-
+ 
 
 
 
@@ -1252,11 +1388,11 @@ Otherwise, this is a request for an immediate pickup (within 30 minutes).
 ## marketplace/public/grpc/demand_handler/v2/gen-doc/demand_s2s_service.proto
 The server to service API
 
+ 
 
+ 
 
-
-
-
+ 
 
 
 <a name="demand.v2.s2s.S2SDemandApi"/>
@@ -1297,6 +1433,7 @@ Errors: NOT_FOUND: The offer ID is expired or does not exist ALREADY_EXISTS: A b
 | GetRideTrackingDetails | [GetRideTrackingDetailsRequest](#demand.v2.s2s.GetRideTrackingDetailsRequest) | [.demand.v2.common.RideTrackingDetails](#demand.v2.s2s.GetRideTrackingDetailsRequest) | Returns the ride tracking details by ride tracking ID Errors: INVALID_ARGUMENT - ride tracking id was not supplied NOT_FOUND - ride not found for the specified ride tracking ID, or ride tracking ID is invalid |
 | CancelTrackedRide | [CancelTrackedRideRequest](#demand.v2.s2s.CancelTrackedRideRequest) | [.demand.v2.common.Empty](#demand.v2.s2s.CancelTrackedRideRequest) | Cancel a tracked ride by ride tracking ID. validation is done by comparing the request passenger phone to the passenger phone number as retrieved in Create Ride Request Errors: INVALID_ARGUMENT - ride tracking id or passenger phone were not supplied NOT_FOUND - ride not found for the specified ride tracking ID, or ride tracking ID is invalid UNAUTHENTICATED: Validation failed for the given passenger phone number |
 | GetOfferTrackingDetails | [GetOfferTrackingDetailsRequest](#demand.v2.s2s.GetOfferTrackingDetailsRequest) | [.demand.v2.common.RideOffer](#demand.v2.s2s.GetOfferTrackingDetailsRequest) | Returns the offer by offer tracking ID Errors: INVALID_ARGUMENT - offer tracking id was not supplied NOT_FOUND - offer not found for the specified offer tracking ID, or offer tracking ID is invalid |
+| GetVerticalsCoverage | [GetVerticalsCoverageRequest](#demand.v2.s2s.GetVerticalsCoverageRequest) | [.demand.v2.common.VerticalsCoverageResponse](#demand.v2.s2s.GetVerticalsCoverageRequest) | Returns the verticals in which the point is covered |
 
  
 
@@ -1321,3 +1458,4 @@ Errors: NOT_FOUND: The offer ID is expired or does not exist ALREADY_EXISTS: A b
 | <a name="bool" /> bool |  | bool | boolean | boolean |
 | <a name="string" /> string | A string must always contain UTF-8 encoded or 7-bit ASCII text. | string | String | str/unicode |
 | <a name="bytes" /> bytes | May contain any arbitrary sequence of bytes. | string | ByteString | str |
+
