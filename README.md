@@ -29,7 +29,6 @@
     - [CancellationInfo](#demand.v2.common.CancellationInfo)
     - [DriverDetails](#demand.v2.common.DriverDetails)
     - [PassengerDetails](#demand.v2.common.PassengerDetails)
-    
     - [PublicTransportRouteLeg](#demand.v2.common.PublicTransportRouteLeg)
     - [Ride](#demand.v2.common.Ride)
     - [RideLocation](#demand.v2.common.RideLocation)
@@ -47,9 +46,12 @@
     - [TransportTypePreference](#demand.v2.common.TransportTypePreference)
     - [Vehicle](#demand.v2.common.Vehicle)
     - [VerticalsCoverageResponse](#demand.v2.common.VerticalsCoverageResponse)
+
     - [CancellationInfo.CancelReasonCategory](#demand.v2.common.CancellationInfo.CancelReasonCategory)
     - [CancellationInfo.Party](#demand.v2.common.CancellationInfo.Party)
     - [CancellationInfo.Status](#demand.v2.common.CancellationInfo.Status)
+    - [CancellationInfo.StatusReason](#demand.v2.common.CancellationInfo.StatusReason)
+    - [DemandCancellingParty](#demand.v2.common.DemandCancellingParty)
     - [PassengerCancelReasonCategory](#demand.v2.common.PassengerCancelReasonCategory)
     - [PublicTransportRouteLeg.PublicTransportMode](#demand.v2.common.PublicTransportRouteLeg.PublicTransportMode)
     - [RideOffer.CancellationPolicy](#demand.v2.common.RideOffer.CancellationPolicy)
@@ -59,9 +61,9 @@
     - [RideQuery.SortType](#demand.v2.common.RideQuery.SortType)
     - [RideStatusUpdate.Status](#demand.v2.common.RideStatusUpdate.Status)
     - [Vehicle.VehicleType](#demand.v2.common.Vehicle.VehicleType)
-  
-  
-  
+
+
+
 
 - [marketplace/public/grpc/demand_handler/v2/gen-doc/demand_common_types.proto](#marketplace/public/grpc/demand_handler/v2/gen-doc/demand_common_types.proto)
     - [Address](#demand.v2.common.Address)
@@ -73,10 +75,11 @@
     - [PriceEstimate](#demand.v2.common.PriceEstimate)
     - [PriceRange](#demand.v2.common.PriceRange)
     - [TimeRange](#demand.v2.common.TimeRange)
-  
-  
-  
-  
+
+    - [Place.PlaceCategory](#demand.v2.common.Place.PlaceCategory)
+
+
+
 
 - [marketplace/public/grpc/demand_handler/v2/gen-doc/demand_s2s_messages.proto](#marketplace/public/grpc/demand_handler/v2/gen-doc/demand_s2s_messages.proto)
     - [CancelRideRequest](#demand.v2.s2s.CancelRideRequest)
@@ -92,17 +95,37 @@
     - [GetRideTrackingDetailsRequest](#demand.v2.s2s.GetRideTrackingDetailsRequest)
     - [GetVerticalsCoverageRequest](#demand.v2.s2s.GetVerticalsCoverageRequest)
     - [RideOffersRequest](#demand.v2.s2s.RideOffersRequest)
-  
-  
-  
-  
+
+
+
+
 
 - [marketplace/public/grpc/demand_handler/v2/gen-doc/demand_s2s_service.proto](#marketplace/public/grpc/demand_handler/v2/gen-doc/demand_s2s_service.proto)
-  
-  
-  
+
+
+
     - [S2SDemandApi](#demand.v2.s2s.S2SDemandApi)
-  
+
+
+- [marketplace/public/grpc/demand_handler/v2/gen-doc/demand_webhooks_messages.proto](#marketplace/public/grpc/demand_handler/v2/gen-doc/demand_webhooks_messages.proto)
+    - [DemandInfo](#demand.v2.webhooks.DemandInfo)
+    - [DriverVehicleDetails](#demand.v2.webhooks.DriverVehicleDetails)
+    - [ETAUpdate](#demand.v2.webhooks.ETAUpdate)
+    - [EventMetadata](#demand.v2.webhooks.EventMetadata)
+    - [LocationUpdate](#demand.v2.webhooks.LocationUpdate)
+    - [RideUpdate](#demand.v2.webhooks.RideUpdate)
+    - [StatusChange](#demand.v2.webhooks.StatusChange)
+
+
+
+
+
+- [marketplace/public/grpc/demand_handler/v2/gen-doc/demand_webhooks_service.proto](#marketplace/public/grpc/demand_handler/v2/gen-doc/demand_webhooks_service.proto)
+
+
+
+    - [DemandWebhooksAPI](#demand.v2.webhooks.DemandWebhooksAPI)
+
 
 - [Scalar Value Types](#scalar-value-types)
 
@@ -163,6 +186,7 @@ A request to create a new ride by offer ID
 
 Note: this field is deprecated and is ignored. |
 | preferences | [demand.v2.common.RidePreferences](#demand.v2.common.RidePreferences) |  | Optional. Preferences for the ride. |
+| payment_ticket_id | [string](#string) |  | Optional. Ticket to be used for online payment. |
 
 
 
@@ -253,13 +277,13 @@ Otherwise, this is a request for an immediate pickup (within 30 minutes).
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -269,11 +293,11 @@ Otherwise, this is a request for an immediate pickup (within 30 minutes).
 ## marketplace/public/grpc/demand_handler/v2/gen-doc/demand_c2s_service.proto
 The client-to-service API
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="demand.v2.c2s.C2SDemandApi"/>
@@ -312,7 +336,7 @@ Errors: NOT_FOUND: The offer ID is expired or does not exist ALREADY_EXISTS: A b
 | CreatePublicTransportRide | [CreatePublicTransportRideRequest](#demand.v2.c2s.CreatePublicTransportRideRequest) | [.demand.v2.common.Empty](#demand.v2.c2s.CreatePublicTransportRideRequest) | Notify the marketplace that a public transportation offer was chosen |
 | GetVerticalsCoverage | [GetVerticalsCoverageRequest](#demand.v2.c2s.GetVerticalsCoverageRequest) | [.demand.v2.common.VerticalsCoverageResponse](#demand.v2.c2s.GetVerticalsCoverageRequest) | Returns the verticals in which the point is covered |
 
- 
+
 
 
 
@@ -352,6 +376,7 @@ Information about a ride cancellation
 | request_time_ms | [uint64](#uint64) |  | The time the cancellation was requested. |
 | status | [CancellationInfo.Status](#demand.v2.common.CancellationInfo.Status) |  | The status of the cancellation request. |
 | cancel_reason_category | [CancellationInfo.CancelReasonCategory](#demand.v2.common.CancellationInfo.CancelReasonCategory) |  | The cancellation reason cateory. |
+| status_reason | [CancellationInfo.StatusReason](#demand.v2.common.CancellationInfo.StatusReason) |  | The reason for the cancellation status (e.g. why it was rejected). |
 
 
 
@@ -388,6 +413,7 @@ Passenger information
 | phone_number | [string](#string) |  | Mandatory. The passenger’s telephone number. |
 | photo_url | [string](#string) |  | Optional. A URL pointing to the passenger’s photo. |
 | email | [string](#string) |  | Optional. The passenger&#39;s email address. |
+
 
 
 
@@ -494,7 +520,7 @@ An offer for a ride on the given route.
 | ----- | ---- | ----- | ----------- |
 | offer_id | [string](#string) |  | A unique offer ID. If this offer is chosen, the client sends this ID when calling CreateRide. |
 | supplier | [Supplier](#demand.v2.common.Supplier) |  | The supplier details. |
-| route | [Route](#demand.v2.common.Route) |  | The ride route that the supplier suggests. |
+| route | [Route](#demand.v2.common.Route) |  | The ride route as confirmed by the marketplace and the supplier. |
 | estimated_pickup_time_ms | [uint64](#uint64) |  | Optional. Pickup time (in epoch) estimate sent by the supplier. NOTE: This field will be deprecated soon, please use estimated_pickup_time_seconds instead. |
 | estimated_dropoff_time_ms | [uint64](#uint64) |  | Optional. Drop-off time (in epoch) estimate sent by the supplier. NOTE: This field will be deprecated soon, please use estimated_ride_duration_seconds instead. |
 | price_estimation | [PriceEstimate](#demand.v2.common.PriceEstimate) |  | Optional. A price estimate for the ride. |
@@ -507,6 +533,7 @@ An offer for a ride on the given route.
 | estimated_pickup_time_seconds | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Optional. Estimated number of seconds until the driver will pick the passenger up. For example: 60 seconds to pickup |
 | estimated_ride_duration_seconds | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Optional. Estimated number of seconds between pickup and dropoff. NOTE: It does not include the time until pickup. |
 | duration_seconds | [uint64](#uint64) |  | Duration of the route in seconds. NOTE: this field will be deprecated soon. Please use estimated_ride_duration_seconds instead. |
+| requested_route | [Route](#demand.v2.common.Route) |  | The ride route as the user requested. |
 
 
 
@@ -761,7 +788,7 @@ Vehicle details
 
 
 
- 
+
 
 
 <a name="demand.v2.common.CancellationInfo.CancelReasonCategory"/>
@@ -795,8 +822,10 @@ Vehicle details
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | UNKNOWN | 0 | The cancelling party is unknown. |
-| DEMANDER | 1 | The client cancelled the ride. |
+| DEMANDER | 1 | The demander cancelled the ride (e.g. concierge). |
 | SUPPLIER | 2 | The supplier cancelled the ride. |
+| PASSENGER | 3 | The passenger cancelled the ride. |
+| MARKETPLACE | 4 | MP cancelled the ride. |
 
 
 
@@ -811,6 +840,34 @@ Vehicle details
 | PROCESSING | 1 | The cancellation request is being processed. |
 | ACCEPTED | 2 | The cancellation request is accepted. |
 | REJECTED | 3 | The cancellation request is rejected. |
+
+
+
+<a name="demand.v2.common.CancellationInfo.StatusReason"/>
+
+### CancellationInfo.StatusReason
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| UNKNOWN_STATUS_REASON | 0 | The cancellation status reason is unknown. |
+| COULD_NOT_CONTACT_SUPPLIER | 1 | The marketplace could not contact the supplier. |
+| SUPPLIER_REJECTED_CANCELLATION | 2 | The supplier rejected the cancellation request. |
+| SUPPLIER_DOES_NOT_SUPPORT_CANCELLATION | 3 | The supplier does not support cancellations. |
+| RIDE_STATUS_INVALID_FOR_CANCELLATION | 4 | The ride is in a status in which it cannot be canceled |
+
+
+
+<a name="demand.v2.common.DemandCancellingParty"/>
+
+### DemandCancellingParty
+Party responsible for cancelling the ride
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| UNKNOWN | 0 | The cancelling party is unknown. |
+| DEMANDER | 1 | The demander cancelled the ride (e.g. concierge). |
+| PASSENGER | 2 | The passenger cancelled the ride. |
 
 
 
@@ -829,7 +886,6 @@ Passenger cancellation reason category
 | DRIVER_BEHAVED_INAPPROPRIATELY | 5 | Driver behaved inappropriately. |
 | CHANGED_MY_PLANS | 6 | Passenger changed plans. |
 | OTHER_PASSENGER_CANCEL_REASON_CATEGORY | 100 | Other. |
-
 
 
 
@@ -965,11 +1021,11 @@ Ride status values
 | NOT_SUPPLIED | 5 | Vehicle type not supplied. |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -1043,7 +1099,7 @@ A start/end/midpoint location in a ride
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  | The place name. |
-| category | [string](#string) |  | The place category (e.g.: Airport, Restaurant, Park, etc.). |
+| category | [Place.PlaceCategory](#demand.v2.common.Place.PlaceCategory) |  | The place category (e.g.: Airport, Restaurant, Park, etc.). |
 
 
 
@@ -1130,13 +1186,84 @@ A time range
 
 
 
- 
 
- 
 
- 
 
- 
+<a name="demand.v2.common.Place.PlaceCategory"/>
+
+### Place.PlaceCategory
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| UNKNOWN | 0 |  |
+| RESTAURANT | 1000 | An establishment that prepares and serves refreshments and prepared meals. |
+| COFFEE_TEA | 1100 | An establishment that sells drinks, such as coffee and tea, as well as refreshments. |
+| NIGHTLIFE | 2000 | An establishment that provides evening entertainment and usually serves alcoholic beverages. |
+| CINEMA | 2100 | An establishment that shows movies through screen projection. |
+| CULTURE | 2200 | An establishment where various types of performing arts are presented. |
+| GAMBLING_LOTTERY | 2300 | An establishment that provides gambling entertainment. |
+| ATTRACTION | 3000 | A designated area of special interest to tourists. |
+| MUSEUM | 3100 | An establishment dedicated to the preservation and exhibition of artistic, historical, or scientific artifacts. |
+| RELIGIOUS_PLACE | 3200 | An establishment of special religious significance or where religious services are held. |
+| WATER | 3500 | A natural and geographical feature of the earth&#39;s surface that is covered with water, such as a lake, river, stream or ocean. |
+| MOUNTAIN | 3510 | A natural and geographical feature that is higher than the surrounding land. |
+| UNDERSEA | 3520 | Undersea attractions |
+| FOREST | 3522 | A forest, heath or other vegetation |
+| GEOGRAPHICAL | 3550 | Natural and geographical locations |
+| AIRPORT | 4000 | A designated area that serves various aspects of aviation related sports, including gliders, recreational aircraft and model airplanes. |
+| PUBLIC_TRANSPORTATION | 4100 | A facility for travelers who are travelling between stops on public transport. |
+| CARGO_TRANSPORTATION | 4200 | A facility that handles some aspect of the transportation of cargo freight. |
+| REST_AREA | 4300 | An establishment along a motorway (controlled access road) that provides restrooms and parking. |
+| HOTEL | 5000 | A business that provides lodging or temporary living quarters. |
+| LODGE | 5100 | A business that provides lodging to the public generally without room service. |
+| OUTDOORS | 5510 | Public land preserved and maintained for recreational use. |
+| LEISURE | 5520 | A park that contains rides and/or other entertainment which may be based on a central theme. |
+| CONVENIENCE_STORE | 6000 | An establishment that sells groceries, candy, toiletries, soft drinks, tobacco products, newspapers and other products. |
+| SHOPPING_CENTER | 6100 | A complex of businesses that are co-located and share common services. |
+| DEPARTMENT_STORE | 6200 | A business that sells a wide variety of merchandise that is organized by product or service departments. |
+| FOOD_AND_DRINKS | 6300 | A business that sells specialty products of a particular type of food or beverage. |
+| PHARMACY | 6400 | A business that sells medications, toiletry items and other retail cosmetics. |
+| ELECTRONICS | 6500 | A business that sells consumer electronics and electronic entertainment equipment. |
+| HARDWARE_HOUSE_GARDEN | 6600 | A business that sells crafts, gardening, remodeling, or decorating items for the home. |
+| BOOKSTORE | 6700 | A business that sells books, magazines and other reading material. |
+| CLOTHING_AND_ACCESSORIES | 6800 | A business that sells apparel items, garments or fashion accessories for men, women, and children. |
+| STORE | 6900 | A business that sells a variety of products targeted to consumers. |
+| HAIR_BEAUTY | 6950 | A business that provides hair styling and personal appearance services. Places in this category may also sell hair products and other related cosmetic items. |
+| BANKING | 7000 | Businesses that specialize in the maintenance, lending, exchange, or issuance of money. |
+| ATM | 7010 | A computer terminal that allows bank customers to deposit, withdraw, or transfer funds without the assistance of a bank teller. |
+| MONEY_SERVICES | 7050 | Businesses that provide money related services. |
+| MEDIA | 7100 | Businesses that provide communication services. |
+| COMMERCIAL_SERVICES | 7201 | Businesses that provide a service or product for use by other businesses. |
+| BUSINESS_INDUSTRY | 7250 | Businesses that employ people in and around the city in which it is located. |
+| EMERGANCY_SERVICES | 7300 | Municipal emergency services |
+| CONSUMER_SERVICES | 7400 | An organization that provides consumer services for a variety of products for used by the public. |
+| POST_OFFICE | 7450 | An office or station that receives, sorts, dispatches and delivers mail to a specific area or region. |
+| TOOURIST_INFORMATION | 7460 | Businesses that provide a variety of information for visiting tourists, such as event schedules, lodging/accommodations, restaurants, attractions and more |
+| FEUL_STATION | 7600 | Businesses that sell fuel for vehicles |
+| CAR_DEALER | 7800 | Businesses that sell new automobiles and motorcycles. |
+| CAR_REPAIR | 7850 | Businesses that provide automotive repair services. |
+| CAR_RENTAL | 7851 | Businesses that rent or lease automobiles. |
+| TRUCK_SERVICES | 7900 | Business that sell or service trucks and tractor trailers. |
+| HEALTH_CARE | 8000 | Facilities that include dental offices, hospitals, nursing homes and other health care-related services. |
+| GOVERNMENT | 8100 | A Place where government services are provided. |
+| EDUCATION | 8200 | Facilities that are used for educational purposes including primary schooling, secondary schooling, universities and more. |
+| LIBRARY | 8300 | Facilities that offer books, periodicals, audio, video and other material for public use. |
+| EVENTS | 8400 | An area or facility used for the hosting of fairs and conventions. |
+| PARKING | 8500 | Area or building used for parking cars |
+| SPORTS | 8600 | A facility used for individual and team sports including recreational sports. |
+| FACILITIES | 8700 | Facilities with miscellaneous uses such as Clubhouses, Offices, and Registration Offices. |
+| CITY | 9100 | Represents a named settlement that may be a (large) city, town, or tiny village |
+| OUTDOORS_COMPLEX | 9200 | Outdoor areas or complexes with designations for specific businesses or interests. |
+| BUILDING | 9300 | Areas and buildings designated for residential or office use |
+| ADMINISTRATIVE_REGION | 9400 | An administrative region, such as a postal area, or a named street/square/intersection. |
+
+
+
+
+
+
+
 
 
 
@@ -1159,6 +1286,7 @@ A request to cancel a ride
 | user_id | [google.protobuf.StringValue](#google.protobuf.StringValue) |  | Optional. The ID of the requesting user. |
 | cancel_reason | [string](#string) |  | Optional. Free text. The reason for the cancellation. |
 | cancel_reason_category | [demand.v2.common.PassengerCancelReasonCategory](#demand.v2.common.PassengerCancelReasonCategory) |  | Optional. The category of the cancellation. |
+| cancelling_party | [demand.v2.common.DemandCancellingParty](#demand.v2.common.DemandCancellingParty) |  | Optional. The party cancelling the ride - demander or passenger. Default is passenger. |
 
 
 
@@ -1216,6 +1344,7 @@ A request to create a new ride by offer ID
 
 Note: this field is deprecated and is ignored. |
 | preferences | [demand.v2.common.RidePreferences](#demand.v2.common.RidePreferences) |  | Optional. Preferences for the ride. |
+| payment_ticket_id | [string](#string) |  | Optional. Ticket to be used for online payment. |
 
 
 
@@ -1372,13 +1501,13 @@ Otherwise, this is a request for an immediate pickup (within 30 minutes).
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -1388,11 +1517,11 @@ Otherwise, this is a request for an immediate pickup (within 30 minutes).
 ## marketplace/public/grpc/demand_handler/v2/gen-doc/demand_s2s_service.proto
 The server to service API
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="demand.v2.s2s.S2SDemandApi"/>
@@ -1434,6 +1563,169 @@ Errors: NOT_FOUND: The offer ID is expired or does not exist ALREADY_EXISTS: A b
 | CancelTrackedRide | [CancelTrackedRideRequest](#demand.v2.s2s.CancelTrackedRideRequest) | [.demand.v2.common.Empty](#demand.v2.s2s.CancelTrackedRideRequest) | Cancel a tracked ride by ride tracking ID. validation is done by comparing the request passenger phone to the passenger phone number as retrieved in Create Ride Request Errors: INVALID_ARGUMENT - ride tracking id or passenger phone were not supplied NOT_FOUND - ride not found for the specified ride tracking ID, or ride tracking ID is invalid UNAUTHENTICATED: Validation failed for the given passenger phone number |
 | GetOfferTrackingDetails | [GetOfferTrackingDetailsRequest](#demand.v2.s2s.GetOfferTrackingDetailsRequest) | [.demand.v2.common.RideOffer](#demand.v2.s2s.GetOfferTrackingDetailsRequest) | Returns the offer by offer tracking ID Errors: INVALID_ARGUMENT - offer tracking id was not supplied NOT_FOUND - offer not found for the specified offer tracking ID, or offer tracking ID is invalid |
 | GetVerticalsCoverage | [GetVerticalsCoverageRequest](#demand.v2.s2s.GetVerticalsCoverageRequest) | [.demand.v2.common.VerticalsCoverageResponse](#demand.v2.s2s.GetVerticalsCoverageRequest) | Returns the verticals in which the point is covered |
+
+
+
+
+
+<a name="marketplace/public/grpc/demand_handler/v2/gen-doc/demand_webhooks_messages.proto"/>
+<p align="right"><a href="#top">Top</a></p>
+
+## marketplace/public/grpc/demand_handler/v2/gen-doc/demand_webhooks_messages.proto
+
+
+
+<a name="demand.v2.webhooks.DemandInfo"/>
+
+### DemandInfo
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| demander_id | [string](#string) |  |  |
+| user_id | [string](#string) |  |  |
+| app_id | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="demand.v2.webhooks.DriverVehicleDetails"/>
+
+### DriverVehicleDetails
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| driver_details | [demand.v2.common.DriverDetails](#demand.v2.common.DriverDetails) |  |  |
+| vehicle | [demand.v2.common.Vehicle](#demand.v2.common.Vehicle) |  |  |
+
+
+
+
+
+
+<a name="demand.v2.webhooks.ETAUpdate"/>
+
+### ETAUpdate
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| event_metadata | [EventMetadata](#demand.v2.webhooks.EventMetadata) |  | mandatory. |
+| estimated_pickup_time_seconds | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Estimated number of seconds until the driver will pick the passenger up. For example: 60 seconds to pickup |
+| estimated_dropoff_time_seconds | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Estimated number of seconds until dropoff. For example: 10 minutes until dropoff (10*60 = 600 seconds) |
+
+
+
+
+
+
+<a name="demand.v2.webhooks.EventMetadata"/>
+
+### EventMetadata
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| event_time | [google.protobuf.Timestamp](#google.protobuf.Timestamp) |  | mandatory. The time the event took place. |
+| event_id | [string](#string) |  | mandatory. Unique ID of event, so in case of duplication you can omit by event id. |
+| demand_info | [DemandInfo](#demand.v2.webhooks.DemandInfo) |  | mandatory. |
+| ride_id | [string](#string) |  | mandatory. |
+
+
+
+
+
+
+<a name="demand.v2.webhooks.LocationUpdate"/>
+
+### LocationUpdate
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| event_metadata | [EventMetadata](#demand.v2.webhooks.EventMetadata) |  | mandatory. |
+| point | [demand.v2.common.Point](#demand.v2.common.Point) |  | mandatory, current location of the vehicle. |
+
+
+
+
+
+
+<a name="demand.v2.webhooks.RideUpdate"/>
+
+### RideUpdate
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| event_metadata | [EventMetadata](#demand.v2.webhooks.EventMetadata) |  | mandatory. |
+| status_change | [StatusChange](#demand.v2.webhooks.StatusChange) |  | In case the ride status changes, the status update will be published via webhook. |
+| driver_vehicle_details | [DriverVehicleDetails](#demand.v2.webhooks.DriverVehicleDetails) |  | In case the supplier sent driver details and/or vehicle details, it will be published via webhook. |
+| cancellation_info | [demand.v2.common.CancellationInfo](#demand.v2.common.CancellationInfo) |  | In case of cancellation request from demande/supply side, we will keep the demander updated regarding the cancellation status, reason etc. |
+| rejection_reason | [google.protobuf.StringValue](#google.protobuf.StringValue) |  | In case of ride rejection, we will keep the demander updated regarding rejection reason. |
+| price | [demand.v2.common.Price](#demand.v2.common.Price) |  | In case ride&#39;s final price is set, the final price will be published via webhook. |
+
+
+
+
+
+
+<a name="demand.v2.webhooks.StatusChange"/>
+
+### StatusChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| status | [demand.v2.common.RideStatusUpdate.Status](#demand.v2.common.RideStatusUpdate.Status) |  |  |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a name="marketplace/public/grpc/demand_handler/v2/gen-doc/demand_webhooks_service.proto"/>
+<p align="right"><a href="#top">Top</a></p>
+
+## marketplace/public/grpc/demand_handler/v2/gen-doc/demand_webhooks_service.proto
+The server to service API
+
+
+
+
+
+
+
+
+<a name="demand.v2.webhooks.DemandWebhooksAPI"/>
+
+### DemandWebhooksAPI
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| HandleRideUpdate | [RideUpdate](#demand.v2.webhooks.RideUpdate) | [.demand.v2.common.Empty](#demand.v2.webhooks.RideUpdate) | Handle ride update |
+| HandleETAUpdate | [ETAUpdate](#demand.v2.webhooks.ETAUpdate) | [.demand.v2.common.Empty](#demand.v2.webhooks.ETAUpdate) | Handle ETA update |
+| HandleLocationUpdate | [LocationUpdate](#demand.v2.webhooks.LocationUpdate) | [.demand.v2.common.Empty](#demand.v2.webhooks.LocationUpdate) | Handle location update |
 
  
 
