@@ -272,6 +272,7 @@ Otherwise, this is a request for an immediate pickup (within 30 minutes).
 | passenger_note | [string](#string) |  | Optional. A free text note from the passenger. |
 | transit_options | [demand.v2.common.TransitOptions](#demand.v2.common.TransitOptions) |  | Optional. Parameters for transit offers. |
 | transport_type_preference | [demand.v2.common.TransportTypePreference](#demand.v2.common.TransportTypePreference) |  | Optional. |
+| locale | [string](#string) |  | Optional. Indicates the language of passenger. Will be used to determine language of addresses and SMSs sent to demander. |
 
 
 
@@ -467,7 +468,7 @@ NOTE: Once a ride reaches a terminal state, it cannot transition to any other st
 | ----- | ---- | ----- | ----------- |
 | user_id | [string](#string) |  | The ID of the user who created this ride. |
 | ride_id | [string](#string) |  | A unique ride id. |
-| route | [Route](#demand.v2.common.Route) |  | The ride route. |
+| route | [Route](#demand.v2.common.Route) |  | The ride route as confirmed by the marketplace and the supplier. |
 | prebook_pickup_time_ms | [uint64](#uint64) |  | Optional. For a pre-booked ride, contains the requested pickup time. |
 | booking_estimated_price | [PriceEstimate](#demand.v2.common.PriceEstimate) |  | Optional. The estimated price at the time of booking. |
 | constraints | [BookingConstraints](#demand.v2.common.BookingConstraints) |  | Constraints defined at the time of booking, such as number of passengers and suitcases. |
@@ -482,7 +483,8 @@ NOTE: Once a ride reaches a terminal state, it cannot transition to any other st
 | cancellation_request_received_but_not_allowed | [bool](#bool) |  | When a cancellation occurs, this field value is TRUE if cancellation isn&#39;t allowed. |
 | price | [Price](#demand.v2.common.Price) |  | Optional. The price of the ride updated by the supplier. |
 | app_id | [string](#string) |  | Optional. The ID of the app. |
-| confirmed_pickup_point | [Point](#demand.v2.common.Point) |  | Optional. The ride confirmed pickup point calculated by Here-API. |
+| confirmed_pickup_point | [Point](#demand.v2.common.Point) |  | Optional. The ride confirmed pickup point calculated by Here-API. NOTE: This field will be deprecated soon, please use route.pickup.point instead. */ |
+| requested_route | [Route](#demand.v2.common.Route) |  | The ride route as the user requested. |
 
 
 
@@ -564,6 +566,7 @@ Preferences of a ride
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | subscribe_to_messages | [google.protobuf.BoolValue](#google.protobuf.BoolValue) |  | Optional. Specifies if messages about the ride will be sent to the passenger. Default is false. |
+| locale | [string](#string) |  | Optional. Indicates the language of passenger. Will be used to determine language of addresses and SMSs sent to demander. |
 
 
 
@@ -1496,6 +1499,7 @@ Otherwise, this is a request for an immediate pickup (within 30 minutes).
 | passenger_note | [string](#string) |  | Optional. A free text note from the passenger. |
 | transit_options | [demand.v2.common.TransitOptions](#demand.v2.common.TransitOptions) |  | Optional. Parameters for transit options. |
 | transport_type_preference | [demand.v2.common.TransportTypePreference](#demand.v2.common.TransportTypePreference) |  | Optional. |
+| locale | [string](#string) |  | Optional. Indicates the language of passenger. Will be used to determine language of addresses and SMSs sent to passenger. |
 
 
 
