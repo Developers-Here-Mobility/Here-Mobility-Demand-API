@@ -272,7 +272,8 @@ Otherwise, this is a request for an immediate pickup (within 30 minutes).
 | passenger_note | [string](#string) |  | Optional. A free text note from the passenger. |
 | transit_options | [demand.v2.common.TransitOptions](#demand.v2.common.TransitOptions) |  | Optional. Parameters for transit offers. |
 | transport_type_preference | [demand.v2.common.TransportTypePreference](#demand.v2.common.TransportTypePreference) |  | Optional. |
-| locale | [string](#string) |  | Optional. Indicates the language of passenger. Will be used to determine language of addresses and SMSs sent to demander. |
+| locale | [string](#string) |  | Optional. The client&#39;s locale. Will be used to determine language of addresses and SMSs sent to passenger. - ISO-639-1 standard language codes, defaults to &#34;en&#34;. - ISO-3166-1-alpha-2 country codes - example: &#34;en-US&#34; (US is the ISO 3166‑1 country code for the United States) Based on IETF language tag best practice as specified by https://tools.ietf.org/html/rfc5646 |
+| max_number_of_offers | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Optional. Max number of offers to be returned. |
 
 
 
@@ -566,7 +567,7 @@ Preferences of a ride
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | subscribe_to_messages | [google.protobuf.BoolValue](#google.protobuf.BoolValue) |  | Optional. Specifies if messages about the ride will be sent to the passenger. Default is false. |
-| locale | [string](#string) |  | Optional. Indicates the language of passenger. Will be used to determine language of addresses and SMSs sent to demander. |
+| messages_locale | [string](#string) |  | Optional. Should indicates the passenger&#39;s locale. Will be used to determine the language to send SMSs to passenger. - ISO-639-1 standard language codes, defaults to &#34;en&#34;. - ISO-3166-1-alpha-2 country codes - example: &#34;en-US&#34; (US is the ISO 3166‑1 country code for the United States) Based on IETF language tag best practice as specified by https://tools.ietf.org/html/rfc5646 |
 
 
 
@@ -676,12 +677,13 @@ provides ride tracking details for a ride
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | ride_tracking_id | [string](#string) |  | The ride tracking ID. |
-| status_log | [RideStatusLog](#demand.v2.common.RideStatusLog) |  | The tracked ride ride status log. |
-| driver | [DriverDetails](#demand.v2.common.DriverDetails) |  | The ride&#39;s driver details. |
-| vehicle | [Vehicle](#demand.v2.common.Vehicle) |  | The ride&#39;s vehicle details. |
-| supplier | [Supplier](#demand.v2.common.Supplier) |  | The ride&#39;s supplier details. |
+| status_log | [RideStatusLog](#demand.v2.common.RideStatusLog) |  | The tracked ride ride status log. Note: this field will be deprectaed soon, please use the ride object instead. |
+| driver | [DriverDetails](#demand.v2.common.DriverDetails) |  | The ride&#39;s driver details. Note: this field will be deprectaed soon, please use the ride object instead. |
+| vehicle | [Vehicle](#demand.v2.common.Vehicle) |  | The ride&#39;s vehicle details. Note: this field will be deprectaed soon, please use the ride object instead. |
+| supplier | [Supplier](#demand.v2.common.Supplier) |  | The ride&#39;s supplier details. Note: this field will be deprectaed soon, please use the ride object instead. |
 | location_and_eta | [RideLocation](#demand.v2.common.RideLocation) |  | The ride&#39;s location and ETA. |
-| cancellation_info | [CancellationInfo](#demand.v2.common.CancellationInfo) |  | When cancellation occurs, this field contains information about the cancellation. |
+| cancellation_info | [CancellationInfo](#demand.v2.common.CancellationInfo) |  | When cancellation occurs, this field contains information about the cancellation. Note: this field will be deprectaed soon, please use the ride object instead. |
+| ride | [Ride](#demand.v2.common.Ride) |  | The ride object. |
 
 
 
@@ -735,7 +737,7 @@ Ride supplier details
 | ----- | ---- | ----- | ----------- |
 | max_transfers | [google.protobuf.Int32Value](#google.protobuf.Int32Value) |  | Optional. Maximum number of changes or transfers allowed in a route. Default is unlimited. Range is 0-6. |
 | max_walking_distance_meters | [google.protobuf.Int32Value](#google.protobuf.Int32Value) |  | Optional. Specifies a maximum walking distance in meters. Default is 2000. Range is 0-6000. |
-| locale | [google.protobuf.StringValue](#google.protobuf.StringValue) |  | Optional. The client&#39;s locale. Complies with the ISO 639-1 standard and defaults to en. |
+| locale | [google.protobuf.StringValue](#google.protobuf.StringValue) |  | DEPRECATED!! please use the locale found in RideOffersRequest |
 
 
 
@@ -1305,7 +1307,7 @@ A request to cancel a ride
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | ride_tracking_id | [string](#string) |  | Mandatory. The ID from the ride tracker url. |
-| passenger_phone | [string](#string) |  | Mandatory. the passenger phone for validation purposes. |
+| passenger_phone | [string](#string) |  | Mandatory. the passenger phone for validation purposes. Note: This field will be deprecated soon. |
 | cancel_reason | [string](#string) |  | Optional. Free text. The reason for the cancellation. |
 | cancel_reason_category | [demand.v2.common.PassengerCancelReasonCategory](#demand.v2.common.PassengerCancelReasonCategory) |  | Optional. The category of the cancellation. |
 
@@ -1499,7 +1501,8 @@ Otherwise, this is a request for an immediate pickup (within 30 minutes).
 | passenger_note | [string](#string) |  | Optional. A free text note from the passenger. |
 | transit_options | [demand.v2.common.TransitOptions](#demand.v2.common.TransitOptions) |  | Optional. Parameters for transit options. |
 | transport_type_preference | [demand.v2.common.TransportTypePreference](#demand.v2.common.TransportTypePreference) |  | Optional. |
-| locale | [string](#string) |  | Optional. Indicates the language of passenger. Will be used to determine language of addresses and SMSs sent to passenger. |
+| locale | [string](#string) |  | Optional. Should indicates clients&#39;s locale. - ISO-639-1 standard language codes, defaults to &#34;en&#34;. - ISO-3166-1-alpha-2 country codes - example: &#34;en-US&#34; (US is the ISO 3166‑1 country code for the United States) Based on IETF language tag best practice as specified by https://tools.ietf.org/html/rfc5646 |
+| max_number_of_offers | [google.protobuf.UInt32Value](#google.protobuf.UInt32Value) |  | Optional. Max number of offers to be returned. |
 
 
 
